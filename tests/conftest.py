@@ -21,9 +21,13 @@ def event_loop():
 async def db_session():
     """
     Fixture to provide a database session for tests.
+    Ensures proper cleanup after each test.
     """
     async with SessionLocal() as session:
-        yield session
+        try:
+            yield session
+        finally:
+            await session.close()
 
 @pytest.fixture
 def override_get_db(db_session):
@@ -36,3 +40,15 @@ def override_get_db(db_session):
     app.dependency_overrides[get_db] = _get_db_override
     yield
     app.dependency_overrides.clear()
+
+from app.database import Base, engine
+
+@pytest.fixture
+async def reset_db():
+    """
+    Fixture to reset the database before tests.
+    Drops all tables and recreates them.
+    """
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
