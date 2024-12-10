@@ -16,6 +16,8 @@ async def get_db():
     async with SessionLocal() as session:
         yield session
 
-async def init_db():
+async def init_db(reset: bool = False):
     async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+        if reset:
+            await conn.run_sync(Base.metadata.drop_all)  # Drop all tables
+        await conn.run_sync(Base.metadata.create_all)  # Create tables

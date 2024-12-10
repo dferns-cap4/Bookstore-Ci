@@ -7,8 +7,8 @@ until pg_isready -h db -p 5432 -U fastapi_user; do
   sleep 2
 done
 
-# Run database initialization
-echo "Initializing database..."
+# Initialize the database schema
+echo "Initializing database schema..."
 python -c "import asyncio; from app.database import init_db; asyncio.run(init_db())"
 
 # Run tests
