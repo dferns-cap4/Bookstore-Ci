@@ -28,6 +28,7 @@ services:
       - "8000:8000"
     environment:
       DATABASE_URL: "postgresql+asyncpg://fastapi_user:secret_password@db/fastapi_db"
+    command: ["pytest","tests/"]
 
 networks:
   fastapi-net:
