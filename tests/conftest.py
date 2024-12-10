@@ -43,12 +43,13 @@ def override_get_db(db_session):
 
 from app.database import Base, engine
 
-@pytest.fixture
+@pytest.fixture(scope="function", autouse=True)
 async def reset_db():
     """
-    Fixture to reset the database before tests.
+    Fixture to reset the database before each test.
     Drops all tables and recreates them.
     """
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
+    yield
