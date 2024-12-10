@@ -9,11 +9,11 @@ from app.database import engine
 app = FastAPI()
 
 @app.on_event("startup")
-async def on_startup():
+async def startup_event():
     """
     Ensure the database is initialized on startup.
     """
-    await init_db()
+    await init_db(reset=True)
 
 @app.on_event("shutdown")
 async def on_shutdown():
